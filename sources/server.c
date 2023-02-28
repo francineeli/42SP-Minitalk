@@ -6,22 +6,20 @@
 /*   By: feli-bar <feli-bar@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 11:04:33 by feli-bar          #+#    #+#             */
-/*   Updated: 2023/02/28 13:53:34 by feli-bar         ###   ########.fr       */
+/*   Updated: 2023/02/28 15:28:52 by feli-bar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minitalk.h"
-#include <stdio.h>
 
-void    ft_exit(int status, char *message)
+void    errors(char *message)
 {
-    if(message)
-        ft_putstr_fd(message, 2); //putstr_fd prints string s in the fd. No return value
-    ft_putchar_fd('\n', 1); // putchar_fd prints char c in the fd. No return value
-    exit(status);
+   
+    ft_putstr_fd(message, STDERR_FILENO); 
+    exit(EXIT_FAILURE);
 }
 
-static  void    ft_print_signal(int signal, siginfo_t *info, void *ucontext)
+void    print_signal(int signal, siginfo_t *info, void *ucontext)
 {
     static int bits_shifted;
     static char letter;
@@ -36,7 +34,7 @@ static  void    ft_print_signal(int signal, siginfo_t *info, void *ucontext)
         else
         {
             if(kill(info->si_pid, SIGUSR2))
-                ft_exit(1, "Signal send failure");    
+                errors("Failed to send signal.\n");    
         }
         letter = 0;
         bits_shifted = 0;
@@ -44,7 +42,7 @@ static  void    ft_print_signal(int signal, siginfo_t *info, void *ucontext)
     else
         bits_shifted++;
     if(kill(info->si_pid, SIGUSR1))
-        ft_exit(1, "Signal send failure");
+        errors("Failed to send signal.\n");
 }
 
 int	main(void)
@@ -53,11 +51,11 @@ int	main(void)
 
 	ft_bzero(&minitalk, sizeof (struct sigaction)); 
 	minitalk.sa_flags = SA_SIGINFO; 
-	minitalk.sa_sigaction = ft_print_signal;
+	minitalk.sa_sigaction = print_signal;
 	if (sigaction(SIGUSR1, &minitalk, NULL))
-		ft_exit(1, "Failed to configure signal function");
+		errors("Failed to configure signal function.\n");
 	if (sigaction(SIGUSR2, &minitalk, NULL))
-		ft_exit(1, "Failed to configure signal function");
+		errors("Failed to configure signal function.\n");
 	ft_printf("PID: %d\n", (int)getpid());
 	while (1)
 		pause();

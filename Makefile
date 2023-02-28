@@ -1,53 +1,42 @@
 NAME = Minitalk
 
-CL = client
-SER = server
+PATH_LIBFT = includes/libft/
 
-INCLUDES = ./includes/
-FILES = ./sources/
-PATH_LIBFT = ./libft/
-PATH_OBJS = ./objects/
+INCLUDES = -I $(PATH_LIBFT)
 
-client_SRC = ./sources/client.c
-server_SRC = ./sources/server.c
+SERVER = server
+SERVER_SRCS = sources/server.c
+SERVER_OBJS = 	$(SERVER_SRCS:.c=.o)
 
-OBJ_SV = $(patsubst $(FILES)%.c, $(PATH_OBJS)%.o, $(server_SRC))
-OBJ_CL = $(patsubst $(FILES)%.c, $(PATH_OBJS)%.o, $(client_SRC))
+CLIENT = client
+CLIENT_SRCS = sources/client.c
+CLIENT_OBJS = 	$(CLIENT_SRCS:.c=.o)
 
-LIBFT = $(PATH_LIBFT)libft.a
+CFLAGS = -Wall -Werror -Wextra $(INCLUDES)
 
+RM = rm -rf
+all: libft $(NAME)
 
-CFLAGS = -Wall -Werror -Wextra 
+libft:
+	make -C $(PATH_LIBFT) 
 
-all: $(NAME)
+$(NAME): $(SERVER) $(CLIENT)
 
-$(NAME):  $(CL) $(SER)
+$(SERVER): $(SERVER_OBJS) $(LIBFT)
+	$(CC) $< -o $@ -L$(PATH_LIBFT) -lft
 
-$(CL): $(OBJ_CL) $(LIBFT)
-	@cc $(CFLAGS) -I $(INCLUDES) -o $(CL) $(OBJ_CL) $(LIBFT)
+$(CLIENT): $(CLIENT_OBJS) $(LIBFT)
+	$(CC) $< -o $@ -L$(PATH_LIBFT) -lft
 
-$(OBJ_CL): $(client_SRC)
-	@mkdir -p $(PATH_OBJS)
-	@cc $(CFLAGS) -I $(INCLUDES) -c $< -o $@
+clean:
+	$(RM) $(SERVER_OBJS) $(CLIENT_OBJS)
+	make clean -C $(PATH_LIBFT)
 
-$(SER): $(OBJ_SV) $(LIBFT)
-	@cc $(CFLAGS) -I $(INCLUDES) -o $(SER) $(OBJ_SV) $(LIBFT)
-
-$(OBJ_SV): $(server_SRC)
-	@mkdir -p $(PATH_OBJS)
-	@cc $(CFLAGS) -I $(INCLUDES) -c $< -o $@
-
-$(LIBFT):
-	@make -C $(PATH_LIBFT)
-
-clean: 
-	@make clean -C $(PATH_LIBFT)
-	rm -rf $(PATH_OBJS)
-
-
-fclean: clean
-	@make fclean -C $(PATH_LIBFT)
-	rm $(SER) $(CL)
-	
+fclean:
+	$(RM) $(SERVER_OBJS) $(CLIENT_OBJS)
+	$(RM) $(SERVER) $(CLIENT)
+	make fclean -C $(PATH_LIBFT)
 
 re: fclean all
+
+.PHONY: all clean fclean re
