@@ -51,14 +51,3 @@ fclean: clean
 	
 
 re: fclean all
-
-
-norm:
-	@printf "\n\nNorminette simples\n\n"
-	@norminette
-	@printf "\n\nNorminette -R CheckHeader\n\n"
-	@norminette -R CheckHeader
-	@printf "\n\nNorminette -R CheckDefine\n\n"
-	@norminette -R CheckDefine
-
-PHONY: all clean fclean re

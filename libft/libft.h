@@ -15,6 +15,10 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdarg.h>
+
+# define BASISUP "0123456789ABCDEF"
+# define BASISLW "0123456789abcdef" 
 
 typedef struct s_list
 {
@@ -37,6 +41,7 @@ char	*ft_strdup(const char *src);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 void	ft_bzero(void *s, size_t n);
+char	*ft_itoa(int n);
 void	*ft_memset(void *s, int c, size_t len);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 void	*ft_memmove(void *dst, const void *src, size_t len);
@@ -55,7 +60,6 @@ void	ft_putnbr_fd(int n, int fd);
 void	ft_striteri(char *s, void (*f)(unsigned int, char*));
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	*ft_strtrim(char const *s1, char const *set);
-char	*ft_itoa(int n);
 char	*ft_strtrim(char const *s1, char const *set);
 char	**ft_split(char const *str, char c);
 char	**ft_split(char const *str, char c);
@@ -70,10 +74,10 @@ void	ft_lstiter(t_list *lst, void (*f) (void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void(*del)(void *));
 int		ft_printf(const char *str, ...);
 int		ft_printchar(int count);
+int		ft_printint(int nb);
 int		ft_printstr(char *str);
 int		ft_printhex(unsigned long nb, int check);
 int		ft_printptr(unsigned long ptr);
-int		ft_itoa(int nb);
 int		ft_utoa(unsigned int nb);
 
 #endif 
