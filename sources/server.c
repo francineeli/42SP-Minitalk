@@ -12,45 +12,44 @@
 
 #include "../includes/minitalk.h"
 
-void    errors(char *message)
+void	errors(char *message)
 {
-   
-    ft_putstr_fd(message, STDERR_FILENO); 
-    exit(EXIT_FAILURE);
+	ft_putstr_fd(message, STDERR_FILENO);
+	exit(EXIT_FAILURE);
 }
 
-void    print_signal(int signal, siginfo_t *info, void *ucontext)
+void	print_signal(int signal, siginfo_t *info, void *ucontext)
 {
-    static int bits_shifted;
-    static char letter;
+	static int	bits_shifted;
+	static char	letter;
 
-    (void)ucontext;
-    if(signal == SIGUSR1)
-        letter += (0b00000001 << bits_shifted);
-    if(bits_shifted == 7)
-    {
-        if(letter)
-            ft_putchar_fd(letter, 1);
-        else
-        {
-            if(kill(info->si_pid, SIGUSR2))
-                errors("Failed to send signal.\n");    
-        }
-        letter = 0;
-        bits_shifted = 0;
-    }
-    else
-        bits_shifted++;
-    if(kill(info->si_pid, SIGUSR1))
-        errors("Failed to send signal.\n");
+	(void)ucontext;
+	if (signal == SIGUSR1)
+		letter += (0b00000001 << bits_shifted);
+	if (bits_shifted == 7)
+	{
+		if (letter)
+			ft_putchar_fd(letter, 1);
+		else
+		{
+			if (kill(info->si_pid, SIGUSR2))
+				errors("Failed to send signal.\n");
+		}
+		letter = 0;
+		bits_shifted = 0;
+	}
+	else
+		bits_shifted++;
+	if (kill(info->si_pid, SIGUSR1))
+		errors("Failed to send signal.\n");
 }
 
 int	main(void)
 {
 	struct sigaction	minitalk;
 
-	ft_bzero(&minitalk, sizeof (struct sigaction)); 
-	minitalk.sa_flags = SA_SIGINFO; 
+	ft_bzero(&minitalk, sizeof (struct sigaction));
+	minitalk.sa_flags = SA_SIGINFO;
 	minitalk.sa_sigaction = print_signal;
 	if (sigaction(SIGUSR1, &minitalk, NULL))
 		errors("Failed to configure signal function.\n");
